@@ -1,7 +1,7 @@
-import Member from './Member';
+import MemberStore from './Member'
 
-const stores = {	
-	member: new Member(),
+const stores = {
+  memberStore: new MemberStore(),
 };
 
 export default stores;
