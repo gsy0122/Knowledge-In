@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import Header from './Header';
+import { Switch, Route } from 'react-router-dom';
+import { HomePage } from '../pages';
 
 class App extends Component {
   render() {
     return (
-        <Header />
+      <Switch>
+        <Route exact path="/" component={HomePage} />
+      </Switch>
     );
   }
 }
