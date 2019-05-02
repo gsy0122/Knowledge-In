@@ -1,10 +1,13 @@
 import React from 'react';
 import styles from './PageTemplate.scss';
+import classNames from 'classnames/bind';
+
+const cx = classNames.bind(styles);
 
 const PageTemplate = () => (
-	<div className="page-template">
+	<div className={cx('page-tamplate')}>
 		
 	</div>
 );
 
-module.exports = PageTemplate;
+export default PageTemplate;
