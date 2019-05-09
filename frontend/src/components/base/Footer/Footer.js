@@ -7,9 +7,9 @@ const cx = classNames.bind(styles);
 class Footer extends Component {
 	render() {
 		return(
-			<div className={cx('footer')}>
+			<footer className={cx('footer')}>
 				Powered By DGSW
-			</div>	
+			</footer>	
 		);
 	}
 }
