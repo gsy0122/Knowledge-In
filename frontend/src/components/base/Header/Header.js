@@ -14,8 +14,8 @@ class Header extends Component {
           <li><a href="/question">질문하기</a></li>
           <li><a href="/answer">답변하기</a></li>
           <li><a href="/profile">프로필</a></li>
-          <li><a href="/register">회원가입</a></li>
-          <li><a href="/login">로그인</a></li>
+          <li><a href="/auth/register">회원가입</a></li>
+          <li><a href="/auth/login">로그인</a></li>
         </ul>
       </header>
 		);
