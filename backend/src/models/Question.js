@@ -6,7 +6,7 @@ const question = Schema({
 	idx: { type: Number, require: true, unique: true },
 	memberId: { type: String, require: true },
 	title: { type: String, require: true },
-	content: { type: String, require: true },
+	content: { type: String, require: false },
 	image: { type: String, require: false },
 	category: { type: String, require: true },
 	tags: { type: [String], require: false },
