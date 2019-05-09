@@ -1,8 +1,10 @@
 import React from 'react';
-import LoginContainer from './../containers/LoginContainer';
+import PageTemplate from './../components/common/PageTemplate';
 
 const HomePage = () => (
-	<LoginContainer />
+	<PageTemplate>
+		홈
+	</PageTemplate>
 );
 
 export default HomePage;
