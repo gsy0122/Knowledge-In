@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const member = Schema({
+const memberSchema = Schema({
 	id: { type: String, require: true, unique: true },
 	pw: { type: String, require: true },
 	name: { type: String, require: true },
@@ -20,4 +20,25 @@ const member = Schema({
 	collection: 'member',
 });
 
-module.exports = mongoose.model('member', member);
+memberSchema.statics.create = data => {
+  const member = new this(data);
+  return member.save();
+};
+
+memberSchema.statics.updateById = (id, data) => {
+  return this.findOneAndUpdate({ id }, data, { new: true });
+};
+
+memberSchema.statics.deleteById = id => {
+  return this.remove({ id });
+};
+
+memberSchema.statics.findOneById = id => {
+  return this.findOne({ id });
+};
+
+memberSchema.statics.findAll = () => {
+  return this.find({});
+};
+
+module.exports = mongoose.model('member', memberSchema);
