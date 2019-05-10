@@ -1,13 +1,12 @@
 const changeCase = require('change-object-case');
-const validate = require('./../../lib/validation');
+const validation = require('./../../lib/validation');
 const models = require('./../../models');
 
 exports.createQuestion = async (ctx) => {
 	console('질문 추가');
 	const body = ctx.request;
-	
   try {
-		await validate.ValidateQuestion(body);
+		await validation.ValidateQuestion(body);
 	} catch (error) {
     console.log(error.message);
     ctx.status = 400;
@@ -35,15 +34,14 @@ exports.createQuestion = async (ctx) => {
 			data: question,
 		};
 	}
-}
+};
 
 exports.modifyQuestion = async (ctx) => {
 	console('질문 추가');
 	const { idx } = ctx.params;
 	const body = ctx.request;
-	
   try {
-		await validate.ValidateQuestion(body);
+		await validation.ValidateQuestion(body);
 	} catch (error) {
     console.log(error.message);
     ctx.status = 400;
@@ -79,7 +77,7 @@ exports.modifyQuestion = async (ctx) => {
 			data: question,
 		};
 	}
-}
+};
 
 exports.deleteQuestion = async (ctx) => {
 	console.log('질문 삭제');
@@ -108,7 +106,29 @@ exports.deleteQuestion = async (ctx) => {
 			message= '질문 조회에 실패하였습니다.',
 		};
 	}
-}
+};
+
+exports.viewQuestions = async (ctx) => {
+	console.log('질문 전체 조회');
+	try {
+		const questions = await models.Question.findAll();
+		ctx.status = 200
+		ctx.body = {
+			status: 200,
+			message: '질문 전체 조회에 성공하였습니다.',
+			data: {
+				questions,
+			},
+		};
+	} catch (error) {
+		console.log(error.message);
+		ctx.status = 500;
+		ctx.body = {
+			status: 500,
+			message: '질문 전체 조회에 실패하였습니다.',
+		};
+	}
+};
 
 exports.viewQuestion = async (ctx) => {
 	console.log('질문 조회');
@@ -137,34 +157,4 @@ exports.viewQuestion = async (ctx) => {
 			message= '질문 조회에 실패하였습니다.',
 		};
 	}
-}
-
-exports.viewQuestions = async (ctx) => {
-	console.log('질문 전체 조회');
-	try {
-		const questions = await models.Question.findAll();
-		if (!questions) {
-			ctx.status = 404;
-			ctx.body = {
-				status: 404,
-				message: '질문이 존재하지 않습니다.',
-			};
-			return;
-		}
-		ctx.status = 200
-		ctx.body = {
-			status: 200,
-			message: '질문 전체 조회에 성공하였습니다.',
-			data: {
-				questions,
-			},
-		};
-	} catch (error) {
-		console.log(error.message);
-		ctx.status = 500;
-		ctx.body = {
-			status: 500,
-			message: '질문 전체 조회에 실패하였습니다.',
-		};
-	}
-}
+};
