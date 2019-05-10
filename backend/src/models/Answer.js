@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const answer = Schema({
+const answerSchema = Schema({
 	idx: { type: Number, require: true, unique: true },
 	questionIdx: { type: Number, require: true },
 	memberId: { type: String, require: true },
@@ -15,4 +15,29 @@ const answer = Schema({
 	collection: 'answer',
 });
 
-module.exports = mongoose.model('answer', answer);
+answerSchema.statics.create = data => {
+  const member = new this(data);
+  return member.save();
+};
+
+answerSchema.statics.updateByIdx = (idx, data) => {
+  return this.findOneAndUpdate({ idx }, data, { new: true });
+};
+
+answerSchema.statics.deleteByIdx = idx => {
+  return this.remove({ idx });
+};
+
+answerSchema.statics.findOneByIdx = idx => {
+  return this.findOne({ idx });
+};
+
+answerSchema.statics.findByQuestionIdx = questionIdx => {
+	return this.find({ questionIdx });
+};
+
+answerSchema.statics.findAll = () => {
+  return this.find({});
+};
+
+module.exports = mongoose.model('answer', answerSchema);
