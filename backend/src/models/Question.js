@@ -19,7 +19,6 @@ const questionSchema = Schema({
 	collection: 'question',
 });
 
-
 questionSchema.statics.create = data => {
   const member = new this(data);
   return member.save();
