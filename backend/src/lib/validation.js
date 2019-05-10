@@ -17,3 +17,17 @@ exports.ValidateQuestion = async (body) => {
     throw error;
   }
 };
+
+exports.ValidateAnswer = async (body) => {
+	const schema = Joi.object().keys({
+		question_idx: Joi.number().integer().required(),
+		content: Joi.string().required().trim(),
+		tags: Joi.array().items(Joi.string()),
+	});
+
+	try {
+		return await Joi.validate(body, schema);
+	} catch (error) {
+		throw error;
+	}
+};
