@@ -1,11 +1,8 @@
 import React from 'react';
-import PageTemplate from './../components/common/PageTemplate';
-import Question from './../components/question/Question';
+import QuestionTemplate from './../components/question/QuestionTemplate';
 
 const QuestionPage = () => (
-	<PageTemplate>
-		<Question />
-	</PageTemplate>
+  <QuestionTemplate />
 );
 
 export default QuestionPage;
