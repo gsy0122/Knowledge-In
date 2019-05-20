@@ -1,8 +1,8 @@
 import React from 'react';
-import QuestionTemplate from './../components/question/QuestionTemplate';
+import WriteQuestion from './../components/question/WriteQuestion';
 
 const QuestionPage = () => (
-  <QuestionTemplate />
+  <WriteQuestion />
 );
 
 export default QuestionPage;
