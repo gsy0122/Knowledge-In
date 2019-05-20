@@ -24,7 +24,8 @@ const memberSchema = new Schema({
 });
 
 memberSchema.statics.create = function (data) {
-  return new this(data).save();
+	const member = new this(data);
+  return member.save();
 };
 
 memberSchema.statics.updateById = function (id, data) {

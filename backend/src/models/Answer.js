@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const answerSchema = Schema({
-	idx: { type: Number, require: true, unique: true },
-	questionIdx: { type: Number, require: true },
+	questionId: { type: Number, require: true },
 	memberId: { type: String, require: true },
 	content: { type: String, require: true },
 	tags: { type: [String], require: false },
@@ -15,29 +14,29 @@ const answerSchema = Schema({
 	collection: 'answer',
 });
 
-answerSchema.statics.create = data => {
+answerSchema.statics.create = function (data) {
   const member = new this(data);
   return member.save();
 };
 
-answerSchema.statics.updateByIdx = (idx, data) => {
+answerSchema.statics.updateByIdx = function (idx, data) {
   return this.findOneAndUpdate({ idx }, data, { new: true });
 };
 
-answerSchema.statics.deleteByIdx = idx => {
+answerSchema.statics.deleteByIdx = function (idx) {
   return this.remove({ idx });
 };
 
-answerSchema.statics.findOneByIdx = idx => {
+answerSchema.statics.findOneByIdx = function (idx) {
   return this.findOne({ idx });
 };
 
-answerSchema.statics.findByQuestionIdx = questionIdx => {
+answerSchema.statics.findByQuestionIdx = function (questionIdx) {
 	return this.find({ questionIdx });
 };
 
-answerSchema.statics.findAll = () => {
+answerSchema.statics.findAll = function () {
   return this.find({});
 };
 
-module.exports = mongoose.model('answer', answerSchema);
+module.exports = mongoose.model('Answer', answerSchema);
