@@ -1,10 +1,12 @@
 const changeCase = require('change-object-case');
 const validation = require('./../../lib/validation');
-const models = require('./../../models');
+const Question = require('./../../models/Question');
 
 exports.createQuestion = async (ctx) => {
-	console('질문 추가');
-	const body = ctx.request;
+	console.log('질문 추가');
+	
+	const {body} = ctx.request;
+	console.log(body);
   try {
 		await validation.ValidateQuestion(body);
 	} catch (error) {
@@ -18,7 +20,7 @@ exports.createQuestion = async (ctx) => {
 	}
 	const data = changeCase.camelKeys(body);
 	try {
-		const question = await models.Question.create(data);
+		const question = await Question.create(data);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -31,7 +33,6 @@ exports.createQuestion = async (ctx) => {
 		ctx.body = {
 			status: 500,
 			message: '질문 추가에 실패하였습니다.',
-			data: question,
 		};
 	}
 };
@@ -52,7 +53,7 @@ exports.modifyQuestion = async (ctx) => {
 		return;
 	}
 	try {
-		const question = await models.Question.findOneByIdx(idx);
+		const question = await Question.findOneByIdx(idx);
 		if (!question) {
 			ctx.status = 404;
 			ctx.body = {
@@ -62,7 +63,7 @@ exports.modifyQuestion = async (ctx) => {
 			return;
 		}
 		const data = changeCase.camelKeys(body);
-		await models.Question.updateByIdx(idx, data);
+		await Question.updateByIdx(idx, data);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -83,7 +84,7 @@ exports.deleteQuestion = async (ctx) => {
 	console.log('질문 삭제');
 	const { idx } = ctx.params;
  	try {
-		const question = await models.Question.findOneByIdx(idx);
+		const question = await Question.findOneByIdx(idx);
 		if (!question) {
 			ctx.status = 404;
 			ctx.body = {
@@ -92,7 +93,7 @@ exports.deleteQuestion = async (ctx) => {
 			};
 			return;
 		}
-		await models.Question.deleteByIdx(idx);
+		await Question.deleteByIdx(idx);
 		ctx.status = 200
 		ctx.body = {
 			status: 200,
@@ -102,8 +103,8 @@ exports.deleteQuestion = async (ctx) => {
 		console.log(error.message);
 		ctx.status = 500;
 		ctx.body = {
-			status = 500,
-			message= '질문 조회에 실패하였습니다.',
+			status: 500,
+			message: '질문 조회에 실패하였습니다.',
 		};
 	}
 };
@@ -111,7 +112,7 @@ exports.deleteQuestion = async (ctx) => {
 exports.viewQuestions = async (ctx) => {
 	console.log('질문 전체 조회');
 	try {
-		const questions = await models.Question.findAll();
+		const questions = await Question.findAll();
 		ctx.status = 200
 		ctx.body = {
 			status: 200,
@@ -134,7 +135,7 @@ exports.viewQuestion = async (ctx) => {
 	console.log('질문 조회');
 	const { idx } = ctx.params;
 	try {
-		const question = await models.Question.findOneByIdx(idx);
+		const question = await Question.findOneByIdx(idx);
 		if (!question) {
 			ctx.status = 404;
 			ctx.body = {
@@ -153,8 +154,8 @@ exports.viewQuestion = async (ctx) => {
 		console.log(error.message);
 		ctx.status = 500;
 		ctx.body = {
-			status = 500,
-			message= '질문 조회에 실패하였습니다.',
+			status: 500,
+			message: '질문 조회에 실패하였습니다.',
 		};
 	}
 };

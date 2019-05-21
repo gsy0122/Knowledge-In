@@ -10,7 +10,7 @@ const questionSchema = Schema({
 	category: { type: String, require: true },
 	tags: { type: [String], require: false },
 	point: { type: Number, default: 0 },
-	anonymous: { type: Number, default: 0 },
+	anonymous: { type: Number, default: 1 },
 	is_adopted: {	type: Number, default: 0 },
 	created_at: { type: Date, default: Date.now },
 	updated_at: { type: Date, default: Date.now },
@@ -19,8 +19,8 @@ const questionSchema = Schema({
 });
 
 questionSchema.statics.create = function (data) {
-  const member = new this(data);
-  return member.save();
+  const question = new this(data);
+  return question.save();
 };
 
 questionSchema.statics.updateByIdx = function (idx, data) {
