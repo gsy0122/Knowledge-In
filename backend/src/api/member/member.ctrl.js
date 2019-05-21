@@ -16,10 +16,7 @@ exports.getMembers = async (ctx) => {
       status: 200,
       message: '사용자 전체 조회에 성공하였습니다.',
       data: {
-        // teachers: members.teachers,
-        // students: members.students,
-        // parents: members.parents,
-        members: ChangeCase.snakeArray(members, { arrayRecursive: true }),
+        members,
       },
     };
   } catch (error) {
@@ -146,5 +143,42 @@ exports.remove = async (ctx) => {
       status: 500,
       message: '사용자 삭제에 실패하였습니다.',
     };
+  }
+};
+
+exports.logout = async (ctx) => {
+  const { body } = ctx.request;
+
+  const validate = Validate.validateMemberLogout(body);
+
+  if (validate.error) {
+    console.log(validate.error);
+    ctx.status = 400;
+    ctx.body = {
+      status: 400,
+      message: '검증 오류입니다.',
+    };
+    return;
+  }
+
+  // const { device } = body;
+
+  try {
+    // await redisHelper.logout(
+    //   singleton.chat.getInstance(),
+    //   singleton.board.getInstance(),
+    //   memberId,
+    //   device,
+    // );
+    ctx.body = {
+      status: 200,
+      message: '로그아웃에 성공하였습니다',
+    };
+  } catch (error) {
+    ctx.body = {
+      status: 500,
+      message: '로그아웃에 실패하였습니다',
+    };
+    console.log(error.message);
   }
 };
