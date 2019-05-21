@@ -44,6 +44,10 @@ memberSchema.statics.findByOver = function (id, mobile, email) {
 	return this.find({ id }, { mobile }, { email });
 }
 
+memberSchema.statics.findOneForLogin = function (id, pw) {
+	return this.findOne({id, pw})
+}
+
 memberSchema.statics.findAll = function () {
   return this.find({});
 };

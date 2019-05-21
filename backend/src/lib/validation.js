@@ -35,14 +35,28 @@ exports.validateMemberModify = async (body) => {
   }
 };
 
+exports.validateMemberLogout = async (body) => {
+  const schema = {
+    device: Joi.string().required().trim(),
+  };
+
+  try {
+    return await Joi.validate(body, schema);
+  } catch (error) {
+    throw error;
+  }
+};
+
 exports.ValidateQuestion = async (body) => {
 	const schema = Joi.object().keys({
+    memberId: Joi.string().regex(/^[a-z0-9]{4,20}$/).min(5).max(20),
 		title: Joi.string().required().trim(),
 		content: Joi.string().required().trim(),
 		image: Joi.any(),
 		category: Joi.string().required(),
 		tags: Joi.array().items(Joi.string()),
-		point: Joi.number().integer().required().min(0).max(100),
+    point: Joi.number().integer().required().min(0).max(100),
+    anonymous: Joi.number().integer().required(),
   });
 
   try {
