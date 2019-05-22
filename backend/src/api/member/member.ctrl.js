@@ -29,6 +29,34 @@ exports.getMembers = async (ctx) => {
   }
 };
 
+exports.getMember = async (ctx) => {
+  console.log('멤버 조회');
+  const { memberId } = ctx.decoded;
+  try {
+    const member = await Member.findOneById(memberId);
+    // const members = {};
+
+    // members.teachers = await models.Teacher.getTeachers();
+    // members.students = await models.Student.getStudents();
+    // members.parents = await models.Parent.getParents();
+
+    ctx.body = {
+      status: 200,
+      message: '사용자 조회에 성공하였습니다.',
+      data: {
+        member,
+      },
+    };
+  } catch (error) {
+    console.log(error.message);
+    ctx.status = 500;
+    ctx.body = {
+      status: 500,
+      message: '사용자 조회에 실패하였습니다.',
+    };
+  }
+}
+
 exports.addMember = async (ctx) => {
   console.log('멤버 추가');
   const { body } = ctx.request;
