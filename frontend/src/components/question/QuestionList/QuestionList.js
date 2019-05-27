@@ -4,13 +4,13 @@ import {withRouter} from 'react-router-dom';
 
 const QuestionList = ({questions, history}) => {
   const handleClick = (question) => {
-    history.push({pathname: '/viewQuestion/' + question._id});
+    history.push({pathname: '/question/view/' + question._id});
   }
 
   return(
     <PageTemplate>
       {questions.map(question => (
-        <p onClick={handleClick.bind(this, question)}>{question.title} | {question.category}</p>
+        <p key={question._id} onClick={handleClick.bind(this, question)}>{question.title} | {question.category}</p>
       ))}
     </PageTemplate>
   );

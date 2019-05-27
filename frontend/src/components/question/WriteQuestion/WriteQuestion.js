@@ -45,7 +45,11 @@ class WriteQuestion extends Component {
     };
     const handleSubmit = async () => {
       await axios
-      .post('http://localhost:8000/question', this.state)
+      .post('http://localhost:8000/question', this.state, {
+        headers: {
+          'x-access-token': localStorage.getItem('token'),
+        },
+      })
       .then(response => {
         alert('질문 작성 성공');
         console.log(JSON.stringify(response));
