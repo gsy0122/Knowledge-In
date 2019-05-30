@@ -1,11 +1,12 @@
 const changeCase = require('change-object-case');
 const validation = require('./../../lib/validation');
 const Question = require('./../../models/Question');
+const Member = require('./../../models/Member');
 
 exports.createQuestion = async (ctx) => {
 	console.log('질문 추가');
-	
-	const {body} = ctx.request;
+	const { body } = ctx.request;
+	const { memberId } = ctx.decoded;
 	console.log(body);
   try {
 		await validation.ValidateQuestion(body);
@@ -20,7 +21,17 @@ exports.createQuestion = async (ctx) => {
 	}
 	const data = changeCase.camelKeys(body);
 	try {
+		const member = await Member.findOneById(memberId);
+		if (!member) {
+			ctx.status = 404;
+			ctx.body = {
+				status: 404,
+				message: '존재하지 않는 사용자입니다.',
+			};
+			return;
+		}
 		const question = await Question.create(data);
+		await Member.updateQuestion(memberId, member.question_count);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -38,8 +49,8 @@ exports.createQuestion = async (ctx) => {
 };
 
 exports.modifyQuestion = async (ctx) => {
-	console('질문 추가');
-	const { idx } = ctx.params;
+	console('질문 수정');
+	const { _id } = ctx.params;
 	const body = ctx.request;
   try {
 		await validation.ValidateQuestion(body);
@@ -53,7 +64,7 @@ exports.modifyQuestion = async (ctx) => {
 		return;
 	}
 	try {
-		const question = await Question.findOneByIdx(idx);
+		const question = await Question.findOneById(_id);
 		if (!question) {
 			ctx.status = 404;
 			ctx.body = {
@@ -74,7 +85,7 @@ exports.modifyQuestion = async (ctx) => {
 		ctx.status = 500;
 		ctx.body = {
 			status: 500,
-			message: '질문 추가에 실패하였습니다.',
+			message: '질문 수정에 실패하였습니다.',
 			data: question,
 		};
 	}
@@ -82,9 +93,9 @@ exports.modifyQuestion = async (ctx) => {
 
 exports.deleteQuestion = async (ctx) => {
 	console.log('질문 삭제');
-	const { idx } = ctx.params;
+	const { _id } = ctx.params;
  	try {
-		const question = await Question.findOneByIdx(idx);
+		const question = await Question.findOneById(_id);
 		if (!question) {
 			ctx.status = 404;
 			ctx.body = {
@@ -93,7 +104,7 @@ exports.deleteQuestion = async (ctx) => {
 			};
 			return;
 		}
-		await Question.deleteByIdx(idx);
+		await Question.deleteById(_id);
 		ctx.status = 200
 		ctx.body = {
 			status: 200,
@@ -133,9 +144,11 @@ exports.viewQuestions = async (ctx) => {
 
 exports.viewQuestion = async (ctx) => {
 	console.log('질문 조회');
-	const { idx } = ctx.params;
+	const { _id } = ctx.params;
 	try {
-		const question = await Question.findOneByIdx(idx);
+		const question = await Question.findOneById(_id);
+		console.log(question);
+		
 		if (!question) {
 			ctx.status = 404;
 			ctx.body = {
@@ -148,7 +161,9 @@ exports.viewQuestion = async (ctx) => {
 		ctx.body = {
 			status: 200,
 			message: '질문 조회에 성공하였습니다.',
-			data: question,
+			data: {
+				question,
+			},
 		};
 	} catch (error) {
 		console.log(error.message);

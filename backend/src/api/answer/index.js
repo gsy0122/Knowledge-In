@@ -4,9 +4,10 @@ const answer = new Router();
 const answerCtrl = require('./answer.ctrl');
 
 answer.post('/', answerCtrl.createAnswer);
-answer.put('/:idx', answerCtrl.modifyAnswer);
-answer.delete('/:idx', answerCtrl.deleteAnswer);
+answer.put('/:_id', answerCtrl.modifyAnswer);
+answer.put('/adopt/:_id', answerCtrl.adoptAnswer);
+answer.delete('/:_id', answerCtrl.deleteAnswer);
 answer.get('/', answerCtrl.viewAnswers);
-answer.get('/:question_idx', answerCtrl.viewAnswersByQuestion);
+answer.get('/:questionId', answerCtrl.viewAnswersByQuestion);
 
 module.exports = answer;

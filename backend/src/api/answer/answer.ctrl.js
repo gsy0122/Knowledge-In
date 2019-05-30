@@ -1,13 +1,18 @@
 const changeCase = require('change-object-case');
-const models = require('./../../models');
 const validation = require('./../../lib/validation');
+const Question = require('./../../models/Question');
+const Answer = require('./../../models/Answer');
+const Member = require('./../../models/Member');
 
 exports.createAnswer = async (ctx) => {
 	console.log('답변 추가');
-	const body = ctx.request;
+	const { body } = ctx.request;
+	const { memberId } = ctx.decoded; 
 	try {
 		await validation.ValidateAnswer(body);
 	} catch (error) {
+		console.log(error.message);
+		
 		ctx.status = 400;
 		ctx.body = {
 			status: 400,
@@ -16,8 +21,9 @@ exports.createAnswer = async (ctx) => {
 		return;
 	}
 	const data = changeCase.camelKeys(body);
+	
 	try {
-		const question = await models.Question.findOneByIdx(data.questionIdx);
+		const question = await Question.findOneById(data.questionId);
 		if (!question) {
 			ctx.status = 401;
 			ctx.body = {
@@ -26,19 +32,22 @@ exports.createAnswer = async (ctx) => {
 			};
 			return;
 		}
-		if (question.is_adopted !== 0) {
-			ctx.status = 402;
+		const member = await Member.findOneById(memberId);
+		if (!member) {
+			ctx.status = 404;
 			ctx.body = {
-				status: 402,
-				message: '채택된 질문입니다.',
+				status: 404,
+				message: '존재하지 않는 사용자입니다.',
 			};
 			return;
 		}
-		await models.Answer.create(data);
+		const answer = await Answer.create(data);
+		await Member.updateAnswer(memberId, member.answerCount);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
 			message: '답변 추가에 성공하였습니다.',
+			data: answer,
 		};
 	} catch (error) {
 		console.log(error.message);
@@ -50,9 +59,62 @@ exports.createAnswer = async (ctx) => {
 	}
 };
 
+exports.adoptAnswer = async (ctx) => {
+	console.log('답변 채택');
+	const { _id } = ctx.params;
+	const { memberId } = ctx.decoded; 
+	try {
+		await validation.ValidateAnswer(body);
+	} catch (error) {
+		console.log(error.message);
+		
+		ctx.status = 400;
+		ctx.body = {
+			status: 400,
+			message: '검증 오류입니다.',
+		};
+		return;
+	}
+
+	try {
+		const answer = await Answer.findOneById(_id);
+		if (!answer) {
+			ctx.status = 401;
+			ctx.body = {
+				status: 401,
+				message: '답변이 존재하지 않습니다.',
+			};
+			return;
+		}
+		const member = await Member.findOneById(memberId);
+		if (!member) {
+			ctx.status = 404;
+			ctx.body = {
+				status: 404,
+				message: '존재하지 않는 사용자입니다.',
+			};
+			return;
+		}
+		await Answer.updateAdopt(_id);
+		await Member.updateAdopt(memberId, member.answerCount);
+		ctx.status = 200;
+		ctx.body = {
+			status: 200,
+			message: '답변 채택에 성공하였습니다.',
+		};
+	} catch (error) {
+		console.log(error.message);
+		ctx.status = 500;
+		ctx.body = {
+			status: 500,
+			message: '답변 채택에 실패하였습니다.',
+		};
+	}
+};
+
 exports.modifyAnswer = async (ctx) => {
 	console.log('답변 수정');
-	const { idx } = ctx.params;
+	const { _id } = ctx.params;
 	const body = ctx.request;
 	try {
 		await validation.ValidateAnswer(body);
@@ -66,7 +128,7 @@ exports.modifyAnswer = async (ctx) => {
 	}
 	const data = changeCase.camelKeys(body);
 	try {
-		const question = await models.Question.findOneByIdx(data.questionIdx);
+		const question = await Question.findOneById(data.questionId);
 		if (!question) {
 			ctx.status = 401;
 			ctx.body = {
@@ -75,7 +137,7 @@ exports.modifyAnswer = async (ctx) => {
 			};
 			return;
 		}
-		if (question.is_adopted !== 0) {
+		if (question.isAdopted !== 0) {
 			ctx.status = 402;
 			ctx.body = {
 				status: 402,
@@ -83,7 +145,7 @@ exports.modifyAnswer = async (ctx) => {
 			};
 			return;
 		}
-		const answer = await models.Answer.findOneByIdx(idx);
+		const answer = await Answer.findOneById(_id);
 		if (!answer) {
 			ctx.status = 404;
 			ctx.body = {
@@ -92,7 +154,7 @@ exports.modifyAnswer = async (ctx) => {
 			};
 			return;
 		}
-		await models.Answer.updateByIdx(idx, data);
+		await Answer.updateById(_id, data);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -109,9 +171,9 @@ exports.modifyAnswer = async (ctx) => {
 };
 
 exports.deleteAnswer = async (ctx) => {
-	const { idx } = ctx.params;
+	const { _id } = ctx.params;
 	try {
-		const answer = await models.Answer.findOneByIdx(idx);
+		const answer = await Answer.findOneById(_id);
 		if (!answer) {
 			ctx.status = 404;
 			ctx.body = {
@@ -120,7 +182,7 @@ exports.deleteAnswer = async (ctx) => {
 			};
 			return;
 		}
-		await models.Answer.deleteByIdx(idx);
+		await Answer.deleteById(_id);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -138,7 +200,7 @@ exports.deleteAnswer = async (ctx) => {
 
 exports.viewAnswers = async (ctx) => {
 	try {
-		const answers = await models.Answer.findAll();
+		const answers = await Answer.findAll();
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -158,9 +220,10 @@ exports.viewAnswers = async (ctx) => {
 };
 
 exports.viewAnswersByQuestion = async (ctx) => {
-	const { question_idx } = ctx.params;
+	console.log('답변 조회');
+	const { questionId } = ctx.params;
 	try {
-		const question = await models.Question.findOneByIdx(question_idx);
+		const question = await Question.findOneById(questionId);
 		if (!question) {
 			ctx.status = 404;
 			ctx.body = {
@@ -169,7 +232,8 @@ exports.viewAnswersByQuestion = async (ctx) => {
 			};
 			return;
 		}
-		const answers = await models.Answer.findByQuestionIdx(question_idx);
+		const answers = await Answer.findByQuestionId(questionId);
+		console.log(answers);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
