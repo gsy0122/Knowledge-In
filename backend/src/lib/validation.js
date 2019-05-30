@@ -68,7 +68,7 @@ exports.ValidateQuestion = async (body) => {
 
 exports.ValidateAnswer = async (body) => {
 	const schema = Joi.object().keys({
-		question_idx: Joi.number().integer().required(),
+		questionId: Joi.string().required(),
 		content: Joi.string().required().trim(),
 		tags: Joi.array().items(Joi.string()),
 	});
