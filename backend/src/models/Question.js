@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const questionSchema = Schema({
-	memberId: { type: String, require: true },
+	memberId: { type: Schema.Types.ObjectId, ref: 'member' },
 	title: { type: String, require: true },
 	content: { type: String, require: true },
 	image: { type: String, require: false },
@@ -11,9 +11,8 @@ const questionSchema = Schema({
 	tags: { type: [String], require: false },
 	point: { type: Number, default: 0 },
 	anonymous: { type: Number, default: 1 },
-	is_adopted: {	type: Number, default: 0 },
-	created_at: { type: Date, default: Date.now },
-	updated_at: { type: Date, default: Date.now },
+	createdAt: { type: Date, default: Date.now },
+	updatedAt: { type: Date, default: Date.now },
 }, {
 	collection: 'question',
 });
@@ -23,16 +22,16 @@ questionSchema.statics.create = function (data) {
   return question.save();
 };
 
-questionSchema.statics.updateByIdx = function (idx, data) {
-  return this.findOneAndUpdate({ idx }, data, { new: true });
+questionSchema.statics.updateById = function (_id, data) {
+  return this.findOneAndUpdate({ _id }, data, { new: true });
 };
 
-questionSchema.statics.deleteByIdx = function (idx) {
-  return this.remove({ idx });
+questionSchema.statics.deleteById = function (_id) {
+  return this.remove({ _id });
 };
 
-questionSchema.statics.findOneByIdx = function (idx) {
-  return this.findOne({ idx });
+questionSchema.statics.findOneById = function (_id) {
+  return this.findOne({ _id });
 };
 
 questionSchema.statics.findAll = function () {
