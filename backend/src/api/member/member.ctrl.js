@@ -77,7 +77,7 @@ exports.addMember = async (ctx) => {
       id, mobile, email,
     } = body;
 
-    const overlap = await Member.findByOver(id, mobile, email);
+    const overlap = await Member.findAllForCheck(id, mobile, email);
     if (overlap.length) {
       ctx.status = 409;
       ctx.body = {
