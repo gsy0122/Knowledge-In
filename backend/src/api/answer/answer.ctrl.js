@@ -59,59 +59,6 @@ exports.createAnswer = async (ctx) => {
 	}
 };
 
-exports.adoptAnswer = async (ctx) => {
-	console.log('답변 채택');
-	const { _id } = ctx.params;
-	const { memberId } = ctx.decoded; 
-	try {
-		await validation.ValidateAnswer(body);
-	} catch (error) {
-		console.log(error.message);
-		
-		ctx.status = 400;
-		ctx.body = {
-			status: 400,
-			message: '검증 오류입니다.',
-		};
-		return;
-	}
-
-	try {
-		const answer = await Answer.findOneById(_id);
-		if (!answer) {
-			ctx.status = 401;
-			ctx.body = {
-				status: 401,
-				message: '답변이 존재하지 않습니다.',
-			};
-			return;
-		}
-		const member = await Member.findOneById(memberId);
-		if (!member) {
-			ctx.status = 404;
-			ctx.body = {
-				status: 404,
-				message: '존재하지 않는 사용자입니다.',
-			};
-			return;
-		}
-		await Answer.updateAdopt(_id);
-		await Member.updateAdopt(memberId, member.answerCount);
-		ctx.status = 200;
-		ctx.body = {
-			status: 200,
-			message: '답변 채택에 성공하였습니다.',
-		};
-	} catch (error) {
-		console.log(error.message);
-		ctx.status = 500;
-		ctx.body = {
-			status: 500,
-			message: '답변 채택에 실패하였습니다.',
-		};
-	}
-};
-
 exports.modifyAnswer = async (ctx) => {
 	console.log('답변 수정');
 	const { _id } = ctx.params;

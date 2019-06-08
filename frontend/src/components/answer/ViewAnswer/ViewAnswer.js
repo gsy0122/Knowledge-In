@@ -4,7 +4,7 @@ import axios from 'axios';
 const ViewAnswer = (props) => {
   const onAdopt = async (answer) => {
     await axios
-      .put(`http://localhost:8000/answer/adopt/${answer._id}`, {
+      .put(`http://localhost:8000/answer/${answer._id}`, { "isAdopted": 1, }, {
         headers: {
           'x-access-token': localStorage.getItem('token'),
         },

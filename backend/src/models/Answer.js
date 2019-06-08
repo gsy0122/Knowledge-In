@@ -24,10 +24,6 @@ answerSchema.statics.updateById = function (_id, data) {
   return this.findOneAndUpdate({ _id }, data, { new: true });
 };
 
-answerSchema.statics.updateAdopt = function (_id) {
-	return this.findOneAndUpdate({ _id }, {$set: {isAdopted: 1}}, { new: true })
-}
-
 answerSchema.statics.deleteById = function (_id) {
   return this.remove({ _id });
 };
