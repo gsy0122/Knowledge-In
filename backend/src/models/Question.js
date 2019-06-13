@@ -11,6 +11,7 @@ const questionSchema = Schema({
 	tags: { type: [String], require: false },
 	point: { type: Number, default: 0 },
 	anonymous: { type: Number, default: 1 },
+	answerId: { type: Schema.Types.ObjectId, ref: 'member', default: null },
 	createdAt: { type: Date, default: Date.now },
 	updatedAt: { type: Date, default: Date.now },
 }, {

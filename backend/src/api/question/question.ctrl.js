@@ -25,13 +25,13 @@ exports.createQuestion = async (ctx) => {
 		if (!member) {
 			ctx.status = 404;
 			ctx.body = {
-				status: 404,
+				status: 404,	
 				message: '존재하지 않는 사용자입니다.',
 			};
 			return;
 		}
 		const question = await Question.create(data);
-		await Member.updateQuestion(memberId, member.question_count);
+		await Member.updateQuestion(memberId, member.questionCount);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -70,6 +70,57 @@ exports.modifyQuestion = async (ctx) => {
 			ctx.body = {
 				status: 404,
 				message: '질문이 존재하지 않습니다.',
+			};
+			return;
+		}
+		const data = changeCase.camelKeys(body);
+		await Question.updateByIdx(idx, data);
+		ctx.status = 200;
+		ctx.body = {
+			status: 200,
+			message: '질문 수정에 성공하였습니다.',
+		};
+	} catch (error) {
+		console.log(error.message);
+		ctx.status = 500;
+		ctx.body = {
+			status: 500,
+			message: '질문 수정에 실패하였습니다.',
+			data: question,
+		};
+	}
+};
+
+exports.adoptQuestion = async (ctx) => {
+	console('질문 채택');
+	const { _id } = ctx.params;
+	const body = ctx.request;
+  try {
+		await validation.ValidateQuestion(body);
+	} catch (error) {
+    console.log(error.message);
+    ctx.status = 400;
+    ctx.body = {
+      status: 400,
+      message: '검증 오류입니다.',
+		};
+		return;
+	}
+	try {
+		const question = await Question.findOneById(_id);
+		if (!question) {
+			ctx.status = 404;
+			ctx.body = {
+				status: 404,
+				message: '질문이 존재하지 않습니다.',
+			};
+			return;
+		}
+		if (question.adoptAnswer !== null) {
+			ctx.status = 401;
+			ctx.body = {
+				status: 401,
+				message: '이미 채택된 답변이 존재하는 질문입니다.',
 			};
 			return;
 		}
