@@ -1,11 +1,13 @@
 import MemberStore from './Member'
 import QuestionStore from './Question';
 import AnswerStore from './Answer';
+import CategoryStore from './Category';
 
 const stores = {
-  memberStore: new MemberStore(),
-  questionStore: new QuestionStore(),
-  answerStore: new AnswerStore(),
+  MemberStore,
+  QuestionStore,
+  AnswerStore,
+  CategoryStore,
 };
 
 export default stores;
