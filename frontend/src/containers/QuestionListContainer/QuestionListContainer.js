@@ -2,17 +2,23 @@ import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 
 import './QuestionListContainer.scss';
-import QuestionList from '../../components/question/QuestionList';
+import PageTemplate from './../../components/common/PageTemplate';
+import QuestionListItem from './../../components/question/QuestionListItem';
 
-@inject('questionStore')
+@inject('stores')
 @observer
 class QuestionListContainer extends Component {
   componentDidMount() {
-    this.props.questionStore.getQuestions();
+    this.props.stores.QuestionStore.getQuestions();
   }
   render() {
+    const questionStore = this.props.stores.QuestionStore;
     return(
-      <QuestionList questions={this.props.questionStore.questions} />
+      <PageTemplate>
+        {questionStore.questions.map(question => (
+          <QuestionListItem question={question} />
+        ))}
+      </PageTemplate>
     );
   };
 }
