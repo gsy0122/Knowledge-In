@@ -8,10 +8,10 @@ exports.findAll = async (ctx) => {
 		ctx.body = {
 			status: 200,
 			message: '카테고리 전체 조회에 성공하였습니다.',
-			data: {
-				categories,
-			},
+			data: categories,
 		};
+		console.log(categories);
+		
 	} catch (error) {
 		console.log(error.message);
 		ctx.status = 500;
