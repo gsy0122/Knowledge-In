@@ -2,6 +2,7 @@ const changeCase = require('change-object-case');
 const validation = require('./../../lib/validation');
 const Question = require('./../../models/Question');
 const Member = require('./../../models/Member');
+const Answer = require('./../../models/Answer');
 
 exports.createQuestion = async (ctx) => {
 	console.log('질문 추가');
@@ -92,22 +93,13 @@ exports.modifyQuestion = async (ctx) => {
 };
 
 exports.adoptQuestion = async (ctx) => {
-	console('질문 채택');
+	console.log('질문 채택');
 	const { _id } = ctx.params;
-	const body = ctx.request;
-  try {
-		await validation.ValidateQuestion(body);
-	} catch (error) {
-    console.log(error.message);
-    ctx.status = 400;
-    ctx.body = {
-      status: 400,
-      message: '검증 오류입니다.',
-		};
-		return;
-	}
+	const { body } = ctx.request;
+	
 	try {
 		const question = await Question.findOneById(_id);
+		console.log(question);
 		if (!question) {
 			ctx.status = 404;
 			ctx.body = {
@@ -116,7 +108,7 @@ exports.adoptQuestion = async (ctx) => {
 			};
 			return;
 		}
-		if (question.adoptAnswer !== null) {
+		if (question.answerId !== null) {
 			ctx.status = 401;
 			ctx.body = {
 				status: 401,
@@ -125,19 +117,28 @@ exports.adoptQuestion = async (ctx) => {
 			return;
 		}
 		const data = changeCase.camelKeys(body);
-		await Question.updateByIdx(idx, data);
+		await Question.updateById(_id, data);
+
+		const answers = await Answer.findByQuestionId(_id);
+		for (let i = 0; i < answers.length; i += 1) { 
+			const answer = answers[i];
+			if (answer._id === question.answerId) {
+				Answer.updateById(answer._id, { isAdopted: 1});
+			} else {
+				Answer.updateById(answer._id, { isAdopted: -1});
+			}
+    }
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
-			message: '질문 수정에 성공하였습니다.',
+			message: '질문 채택에 성공하였습니다.',
 		};
 	} catch (error) {
 		console.log(error.message);
 		ctx.status = 500;
 		ctx.body = {
 			status: 500,
-			message: '질문 수정에 실패하였습니다.',
-			data: question,
+			message: '질문 채택에 실패하였습니다.',
 		};
 	}
 };
