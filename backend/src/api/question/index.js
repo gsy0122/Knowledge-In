@@ -9,5 +9,6 @@ question.put('/adopt/:_id', questionCtrl.adoptQuestion);
 question.delete('/:_id', questionCtrl.deleteQuestion);
 question.get('/', questionCtrl.viewQuestions);
 question.get('/:_id', questionCtrl.viewQuestion);
+question.get('/category/:category_id', questionCtrl.viewQuestionsByCtgy);
 
 module.exports = question;

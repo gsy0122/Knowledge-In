@@ -22,7 +22,7 @@ exports.createQuestion = async (ctx) => {
 	}
 	const data = changeCase.camelKeys(body);
 	try {
-		const member = await Member.findOneById(memberId);
+		const member = await Member.findOneByMemberId(memberId);
 		if (!member) {
 			ctx.status = 404;
 			ctx.body = {
@@ -31,8 +31,10 @@ exports.createQuestion = async (ctx) => {
 			};
 			return;
 		}
+		data.memberId = member._id;
+		console.log(data);
 		const question = await Question.create(data);
-		await Member.updateQuestion(memberId, member.questionCount);
+		await Member.addQuestion(member._id, member.questionCount);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -50,9 +52,9 @@ exports.createQuestion = async (ctx) => {
 };
 
 exports.modifyQuestion = async (ctx) => {
-	console('질문 수정');
+	console.log('질문 수정');
 	const { _id } = ctx.params;
-	const body = ctx.request;
+	const { body } = ctx.request;
   try {
 		await validation.ValidateQuestion(body);
 	} catch (error) {
@@ -75,7 +77,7 @@ exports.modifyQuestion = async (ctx) => {
 			return;
 		}
 		const data = changeCase.camelKeys(body);
-		await Question.updateByIdx(idx, data);
+		await Question.updateById(_id, data);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -87,7 +89,6 @@ exports.modifyQuestion = async (ctx) => {
 		ctx.body = {
 			status: 500,
 			message: '질문 수정에 실패하였습니다.',
-			data: question,
 		};
 	}
 };
@@ -146,6 +147,7 @@ exports.adoptQuestion = async (ctx) => {
 exports.deleteQuestion = async (ctx) => {
 	console.log('질문 삭제');
 	const { _id } = ctx.params;
+	const { memberId } = ctx.decoded;
  	try {
 		const question = await Question.findOneById(_id);
 		if (!question) {
@@ -156,7 +158,9 @@ exports.deleteQuestion = async (ctx) => {
 			};
 			return;
 		}
+    const member = await Member.findOneByMemberId(memberId);
 		await Question.deleteById(_id);
+		await Member.removeQuestion(member._id, member.questionCount);
 		ctx.status = 200
 		ctx.body = {
 			status: 200,
@@ -180,9 +184,7 @@ exports.viewQuestions = async (ctx) => {
 		ctx.body = {
 			status: 200,
 			message: '질문 전체 조회에 성공하였습니다.',
-			data: {
-				questions,
-			},
+			data: questions,
 		};
 	} catch (error) {
 		console.log(error.message);
@@ -223,6 +225,29 @@ exports.viewQuestion = async (ctx) => {
 		ctx.body = {
 			status: 500,
 			message: '질문 조회에 실패하였습니다.',
+		};
+	}
+};
+
+exports.viewQuestionsByCtgy = async (ctx) => {
+	console.log('카테고리별 질문 조회');
+	const { category_id } = ctx.params;
+	try {
+		const questions = await Question.findByCategoryId(category_id);
+		ctx.status = 200
+		ctx.body = {
+			status: 200,
+			message: '카테고리별 질문 조회에 성공하였습니다.',
+			data: {
+				questions,
+			},
+		};
+	} catch (error) {
+		console.log(error.message);
+		ctx.status = 500;
+		ctx.body = {
+			status: 500,
+			message: '카테고리별 질문 조회에 실패하였습니다.',
 		};
 	}
 };
