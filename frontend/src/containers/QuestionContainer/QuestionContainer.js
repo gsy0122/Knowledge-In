@@ -4,17 +4,16 @@ import { inject, observer } from 'mobx-react';
 import './QuestionContainer.scss';
 import ViewQuestion from '../../components/question/ViewQuestion';
 
-@inject('questionStore')
+@inject('stores')
 @observer
 class QuestionContainer extends Component {
   componentDidMount() {
-    this.props.questionStore.getQuestion(this.props.id);
+    this.props.stores.MemberStore.getMember();
+    this.props.stores.QuestionStore.getQuestion(this.props.id);
   }
   render() {
     return(
-			<div>
-        <ViewQuestion question={this.props.questionStore.question} />
-			</div>
+      <ViewQuestion question={this.props.stores.QuestionStore.question} member={this.props.stores.MemberStore.member} />
     );
   };
 }
