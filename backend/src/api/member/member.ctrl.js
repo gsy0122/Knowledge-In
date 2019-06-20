@@ -33,13 +33,13 @@ exports.getMember = async (ctx) => {
   console.log('멤버 조회');
   const { memberId } = ctx.decoded;
   try {
-    const member = await Member.findOneById(memberId);
+    const member = await Member.findOneByMemberId(memberId);
+    console.log(member);
     // const members = {};
 
     // members.teachers = await models.Teacher.getTeachers();
     // members.students = await models.Student.getStudents();
     // members.parents = await models.Parent.getParents();
-
     ctx.body = {
       status: 200,
       message: '사용자 조회에 성공하였습니다.',
@@ -53,6 +53,31 @@ exports.getMember = async (ctx) => {
     ctx.body = {
       status: 500,
       message: '사용자 조회에 실패하였습니다.',
+    };
+  }
+}
+
+exports.searchMember = async (ctx) => {
+  console.log('멤버 검색');
+  const { _id } = ctx.params;
+  console.log(_id);
+  
+  try {
+    const member = await Member.findOneById(_id);
+    console.log(member);
+    ctx.body = {
+      status: 200,
+      message: '사용자 검색에 성공하였습니다.',
+      data: {
+        member,
+      },
+    };
+  } catch (error) {
+    console.log(error.message);
+    ctx.status = 500;
+    ctx.body = {
+      status: 500,
+      message: '사용자 검색에 실패하였습니다.',
     };
   }
 }
@@ -104,10 +129,10 @@ exports.addMember = async (ctx) => {
 };
 
 exports.modifyMember = async (ctx) => {
-  const { id } = ctx.params;
+  const { _id } = ctx.params;
   console.log('멤버 수정');
   try {
-    const member = await Member.findOneById(id);
+    const member = await Member.findOneById(_id);
 
     if (!member) {
       ctx.satuts = 404;
@@ -130,7 +155,7 @@ exports.modifyMember = async (ctx) => {
       return;
 		}
 		
-    await Member.updateById(id, ChangeCase.camelKeys(data));
+    await Member.updateById(_id, ChangeCase.camelKeys(data));
     ctx.body = {
       status: 200,
       message: '사용자 수정에 성공하였습니다.',
