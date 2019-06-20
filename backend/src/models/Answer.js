@@ -37,7 +37,7 @@ answerSchema.statics.findByQuestionId = function (questionId) {
 };
 
 answerSchema.statics.findAll = function () {
-  return this.find({});
+  return this.find({}).sort({ isAdopted: 1 	});
 };
 
 module.exports = mongoose.model('Answer', answerSchema);

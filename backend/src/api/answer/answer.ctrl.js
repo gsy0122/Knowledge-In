@@ -21,8 +21,17 @@ exports.createAnswer = async (ctx) => {
 		return;
 	}
 	const data = changeCase.camelKeys(body);
-	
 	try {
+		const member = await Member.findOneByMemberId(memberId);
+		if (!member) {
+			ctx.status = 404;
+			ctx.body = {
+				status: 404,
+				message: '존재하지 않는 사용자입니다.',
+			};
+			return;
+		}
+		data.memberId = member._id;
 		const question = await Question.findOneById(data.questionId);
 		if (!question) {
 			ctx.status = 401;
@@ -32,17 +41,9 @@ exports.createAnswer = async (ctx) => {
 			};
 			return;
 		}
-		const member = await Member.findOneById(memberId);
-		if (!member) {
-			ctx.status = 404;
-			ctx.body = {
-				status: 404,
-				message: '존재하지 않는 사용자입니다.',
-			};
-			return;
-		}
 		const answer = await Answer.create(data);
-		await Member.updateAnswer(memberId, member.answerCount);
+		await Question.addAnswer(question._id, question.answerCount);
+		await Member.addAnswer(member._id, member.answerCount);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -92,7 +93,7 @@ exports.modifyAnswer = async (ctx) => {
 			};
 			return;
 		}
-		const answer = await Answer.findOneById(_id);
+		const answer = await Answer.findById(_id);
 		if (!answer) {
 			ctx.status = 404;
 			ctx.body = {
@@ -101,7 +102,7 @@ exports.modifyAnswer = async (ctx) => {
 			};
 			return;
 		}
-		await Answer.updateById(_id, data);
+		await Answer.findOneAndUpdate(_id, data);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -120,7 +121,7 @@ exports.modifyAnswer = async (ctx) => {
 exports.deleteAnswer = async (ctx) => {
 	const { _id } = ctx.params;
 	try {
-		const answer = await Answer.findOneById(_id);
+		const answer = await Answer.findById(_id);
 		if (!answer) {
 			ctx.status = 404;
 			ctx.body = {
@@ -129,7 +130,9 @@ exports.deleteAnswer = async (ctx) => {
 			};
 			return;
 		}
-		await Answer.deleteById(_id);
+		await Answer.findByIdAndRemove(_id);
+		await Question.removeAnswer(question._id, question.answerCount);
+		await Member.removeAnswer(member._id, member.answerCount);
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -170,7 +173,7 @@ exports.viewAnswersByQuestion = async (ctx) => {
 	console.log('답변 조회');
 	const { questionId } = ctx.params;
 	try {
-		const question = await Question.findOneById(questionId);
+		const question = await Question.findById(questionId);
 		if (!question) {
 			ctx.status = 404;
 			ctx.body = {
