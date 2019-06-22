@@ -1,4 +1,9 @@
 .page-template {
   top: 0;
   left: 0;
+  > img {
+    width: 100px;
+    height: 100px;
+    background-color: #aaa;
+  }
 }

@@ -8,11 +8,11 @@ import Footer from '../../base/Footer';
 const cx = classNames.bind(styles);
 
 const PageTemplate = ({children}) => (
-	<div className={cx('page-tamplate')}>
-		<Header />
-		{children}
-		<Footer />
-	</div>
+  <div className={cx('page-tamplate')}>
+    <Header />
+    {children}
+    <Footer />
+  </div>
 );
 
 export default PageTemplate;
