@@ -5,22 +5,27 @@ import {withRouter} from 'react-router-dom';
 import './ProfileContainer.scss';
 import MemberPane from '../../components/member/MemberPane';
 import MemberSetting from '../../components/member/MemberSetting';
+import PageTemplate from '../../components/common/PageTemplate';
 
 @inject('stores')
 @observer
 class ProfileContainer extends Component {
-	componentDidMount() {
+  componentDidMount() {
     this.props.stores.MemberStore.getMember();
-	}
+  }
   render() {
     const member = this.props.stores.MemberStore.member;
-    console.log(member);
-    
     if (this.props.match && this.props.match.params.member_id) {
-      return <MemberSetting member={member} />
+      return (
+        <PageTemplate>
+          <MemberSetting member={member} />
+        </PageTemplate>
+      );
     }
     return (
-      <MemberPane member={member} />
+      <PageTemplate>
+        <MemberPane member={member} />
+      </PageTemplate>
     );
   }
 }

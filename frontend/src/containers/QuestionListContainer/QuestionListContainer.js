@@ -1,26 +1,39 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
+import {withRouter} from 'react-router-dom';
 
-import './QuestionListContainer.scss';
-import PageTemplate from './../../components/common/PageTemplate';
-import QuestionListItem from './../../components/question/QuestionListItem';
+import PageTemplate from '../../components/common/PageTemplate';
+import QuestionList from '../../components/question/QuestionList';
 
 @inject('stores')
 @observer
 class QuestionListContainer extends Component {
   componentDidMount() {
-    this.props.stores.QuestionStore.getQuestions();
+    if (this.props.match && this.props.match.params.category_id) {
+      this.props.stores.QuestionStore.getQuestionsByCtgy(this.props.match.params.category_id);
+    } else {
+      this.props.stores.QuestionStore.getQuestions();
+    }
+    this.props.stores.CategoryStore.getCategories();
+  }
+  componentDidUpdate(nextProps, nextState){
+    if (this.props.match !== nextProps.match) {
+      if (this.props.match.params.category_id) {
+        this.props.stores.QuestionStore.getQuestionsByCtgy(this.props.match.params.category_id);
+      } else {
+        this.props.stores.QuestionStore.getQuestions();
+      }
+    }
   }
   render() {
-    const questionStore = this.props.stores.QuestionStore;
+    const questions = this.props.stores.QuestionStore.questions;
+    const categories = this.props.stores.CategoryStore.categories;
     return(
       <PageTemplate>
-        {questionStore.questions.map(question => (
-          <QuestionListItem question={question} />
-        ))}
+        <QuestionList questions={questions} categories={categories} />
       </PageTemplate>
     );
   };
 }
 
-export default QuestionListContainer;
+export default withRouter(QuestionListContainer);

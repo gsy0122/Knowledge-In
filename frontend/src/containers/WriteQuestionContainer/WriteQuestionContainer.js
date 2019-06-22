@@ -16,9 +16,8 @@ class WriteQuestionContainer extends Component {
     }
   }
   render() {
-		const categories = this.props.stores.CategoryStore.categories;
+    const categories = this.props.stores.CategoryStore.categories;
     const question = this.props.stores.QuestionStore.question;
-    console.log(question);
     
     if (this.props.match && this.props.match.params.question_id) {
       return <WriteQuestion question={question} categories={categories} />
