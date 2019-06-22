@@ -1,0 +1,27 @@
+.member-pane {
+  position: absolute;
+  outline: 2px solid #000;
+  top: 50vh;
+  left: 50vw;
+  transform: translate(-50%, -50%);
+  padding: 10vh 15vw;
+  > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 2vh 1vw;
+  }
+  > button {
+    position: absolute;
+    right: 1vw;
+    bottom: 1vh;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 15px;
+    background-color: #00cc00; 
+    width: 70px;
+    height: 30px;
+    cursor: pointer;
+  }
+}

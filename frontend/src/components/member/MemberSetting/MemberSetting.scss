@@ -1,0 +1,32 @@
+.member-setting {
+  position: absolute;
+  top: 50vh;
+  left: 50vw;
+  transform: translate(-50%, -50%);
+  > div {
+    margin-top: 10px;
+    > input {
+      border-radius: 5px;
+      outline-style: none;
+      padding: 5px 8px;
+    }
+    &:last-child {
+      text-align: center;
+    }
+    > button {
+      margin-top: 20px;
+      width: 200px;
+      height: 40px;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 18px;
+      background-color: #00cc00;
+      cursor: pointer;
+    }
+    > p {
+      cursor: pointer;
+      font-size: small;
+    }
+  }
+}
