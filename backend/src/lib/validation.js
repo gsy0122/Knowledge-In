@@ -49,7 +49,6 @@ exports.validateMemberLogout = async (body) => {
 
 exports.ValidateQuestion = async (body) => {
 	const schema = Joi.object().keys({
-    memberId: Joi.string().regex(/^[a-z0-9]{4,20}$/).min(5).max(20),
 		title: Joi.string().required().trim(),
 		content: Joi.string().required().trim(),
 		image: Joi.any(),
@@ -68,7 +67,7 @@ exports.ValidateQuestion = async (body) => {
 
 exports.ValidateAnswer = async (body) => {
 	const schema = Joi.object().keys({
-		questionId: Joi.string().required(),
+		question: Joi.string().required(),
 		content: Joi.string().required().trim(),
 		tags: Joi.array().items(Joi.string()),
 	});
