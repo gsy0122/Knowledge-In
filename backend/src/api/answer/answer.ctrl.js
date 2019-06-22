@@ -31,8 +31,8 @@ exports.createAnswer = async (ctx) => {
 			};
 			return;
 		}
-		data.memberId = member._id;
-		const question = await Question.findOneById(data.questionId);
+		data.member = member._id;
+		const question = await Question.findOneById(data.question);
 		if (!question) {
 			ctx.status = 401;
 			ctx.body = {
@@ -118,10 +118,61 @@ exports.modifyAnswer = async (ctx) => {
 	}
 };
 
+exports.AdoptAnswer = async (ctx) => {
+	console.log('답변 채택');
+	const { _id } = ctx.params;
+	try {
+		const answer = await Answer.findOneById(_id);
+		if (!answer) {
+			ctx.status = 401;
+			ctx.body = {
+				status: 401,
+				message: '답변이 존재하지 않습니다.',
+			};
+			return;
+		}
+		const question = await Question.findOneById(answer.question._id);
+		if (!question) {
+			ctx.status = 402;
+			ctx.body = {
+				status: 402,
+				message: '질문이 존재하지 않습니다.',
+			};
+			return;
+		}
+		if (question.answer !== null) {
+			ctx.status = 403;
+			ctx.body = {
+				status: 403,
+				message: '채택된 질문입니다.',
+			};
+			return;
+		}
+		const member = await Member.findOneById(answer.member._id);
+		console.log(member.adoptPoint);
+		console.log(question.point);
+		await Member.updateAdopt(member, question.point);
+		await Answer.updateById(_id, { isAdopted: 1 });
+		await Question.updateById(question._id, { answer: _id });
+		ctx.status = 200;
+		ctx.body = {
+			status: 200,
+			message: '답변 채택에 성공하였습니다.',
+		};
+	} catch (error) {
+		console.log(error.message);
+		ctx.status = 500;
+		ctx.body = {
+			status: 500,
+			message: '답변 채택에 실패하였습니다.',
+		};
+	}
+};
+
 exports.deleteAnswer = async (ctx) => {
 	const { _id } = ctx.params;
 	try {
-		const answer = await Answer.findById(_id);
+		const answer = await Answer.findOneById(_id);
 		if (!answer) {
 			ctx.status = 404;
 			ctx.body = {
@@ -130,9 +181,22 @@ exports.deleteAnswer = async (ctx) => {
 			};
 			return;
 		}
+		if (answer.isAdopted === 1) {
+			ctx.status = 401;
+			ctx.body = {
+				status: 401,
+				message: '채택된 답변은 삭제할 수 없습니다.',
+			};
+		}
 		await Answer.findByIdAndRemove(_id);
-		await Question.removeAnswer(question._id, question.answerCount);
-		await Member.removeAnswer(member._id, member.answerCount);
+		const question = await Question.findOneById(answer.question._id);
+		if (question) {
+			await Question.removeAnswer(question._id, question.answerCount);
+		}
+		const member = await Member.findOneById(answer.member._id);
+		if (member) {
+			await Member.removeAnswer(member._id, member.answerCount);
+		}
 		ctx.status = 200;
 		ctx.body = {
 			status: 200,
@@ -188,9 +252,7 @@ exports.viewAnswersByQuestion = async (ctx) => {
 		ctx.body = {
 			status: 200,
 			message: '답변 조회에 성공하였습니다.',
-			data: {
-				answers,
-			},
+			data: answers,
 		};
 	} catch (error) {
 		console.log(error.message);
