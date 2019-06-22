@@ -1,32 +1,54 @@
-import { observable, action } from 'mobx';
+import { observable } from 'mobx';
+import { asyncAction } from 'mobx-utils';
 import { autobind } from 'core-decorators';
 
 import MemberRepository from './MemberRepository';
 
 @autobind
 class MemberStore {
-  @observable members = [];
-  @observable member = {};
+  static __instance = null;
+  static getInstance() {
+    if (MemberStore.__instance === null) {
+      MemberStore.__instance = new MemberStore();
+    }
+    return MemberStore.__instance;
+  }
+  constructor() {
+    MemberStore.__instance = this;
+  }
 
-  @action
-  async getMembers() {
+  @observable member = {};
+  @asyncAction async *getMember() {
     try {
-      const { data, status } = await MemberRepository.getMembers();
+      const { data, status } = yield MemberRepository.getMember();
       if (status === 200) {
-        this.members = data;
+        console.log(data);
+        this.member = data.data.member;
       }
     } catch (error) {
       console.log(error.message);
     }
   }
-  @action
-  async getMember() {
+
+  @observable members = [];
+  @asyncAction async *getMembers() {
     try {
-      const { data, status } = await MemberRepository.getMember();
-      console.log(data);
-      
+      const { data, status } = yield MemberRepository.getMembers();
       if (status === 200) {
-        this.member = data.data.member;
+        this.members = data.data;
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  @observable search = {};
+  @asyncAction async *searchMember(_id) {
+    try {
+      const { data, status } = yield MemberRepository.searchMember(_id);
+      console.log(data);
+      if (status === 200) {
+        this.search = data.data.member;
       }
     } catch (error) {
       console.log(error.message);
@@ -34,4 +56,4 @@ class MemberStore {
   }
 }
 
-export default MemberStore;
+export default MemberStore.getInstance();

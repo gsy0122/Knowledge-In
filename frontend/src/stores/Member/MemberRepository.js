@@ -1,15 +1,22 @@
 import axios from 'axios';
 
 class MemberRepository {
-  getMember() {
-    return axios.get(`http://localhost:8000/member/my`, {
+  async getMember() {
+    return await axios.get(`http://localhost:8000/member/my`, {
       headers: {
         'x-access-token': localStorage.getItem('token'),
       },
     });
   }
-  getMembers() {
-    return axios.get(`http://localhost:8000/member`, {
+  async getMembers() {
+    return await axios.get(`http://localhost:8000/member`, {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    });
+  }
+  async searchMember(_id) {
+    return await axios.get(`http://localhost:8000/member/search/${_id}`, {
       headers: {
         'x-access-token': localStorage.getItem('token'),
       },

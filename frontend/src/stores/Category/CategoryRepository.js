@@ -7,14 +7,14 @@ class CategoryRepository {
         'x-access-token': localStorage.getItem('token'),
       },
     });
-	}
-	
-	getCategories() {
-		return axios.get('http://localhost:8000/category', {
-			headers: {
+  }
+  
+  getCategories() {
+    return axios.get('http://localhost:8000/category', {
+      headers: {
         'x-access-token': localStorage.getItem('token'),
-			},
-		});
-	}
+      },
+    });
+  }
 }
 export default new CategoryRepository();

@@ -38,7 +38,7 @@ class CategoryStore {
     try {
       const { data, status } = await CategoryRepository.getCategories();
       if (status === 200) {
-				this.categories = data.data;
+        this.categories = data.data;
       }
     } catch (error) {
       console.log(error.message);

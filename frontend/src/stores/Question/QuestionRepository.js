@@ -1,15 +1,22 @@
 import axios from 'axios';
 
 class QuestionRepository {
-	getQuestion(_id) {
-    return axios.get(`http://localhost:8000/question/${_id}`, {
+  async getQuestion(_id) {
+    return await axios.get(`http://localhost:8000/question/${_id}`, {
       headers: {
         'x-access-token': localStorage.getItem('token'),
       },
     });
-	}
-  getQuestions() {
-    return axios.get(`http://localhost:8000/question`, {
+  }
+  async getQuestions() {
+    return await axios.get(`http://localhost:8000/question`, {
+      headers: {
+        'x-access-token': localStorage.getItem('token'),
+      },
+    });
+  }
+  async getQuestionsByCtgy(category_id) {
+    return await axios.get(`http://localhost:8000/question/category/${category_id}`, {
       headers: {
         'x-access-token': localStorage.getItem('token'),
       },
