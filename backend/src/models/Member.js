@@ -8,15 +8,15 @@ const memberSchema = Schema({
 	name: { type: String, require: true },
 	mobile: { type: String, require: true },
 	email: { type: String, require: true },
-	profileImage: { type: String, require: false },
 	statusMessage: { type: String, require: false },
 	auth: { type: Number, require: true },
 	status: { type: Number, default: 2 },
 	leave: { type: Number, require: true },
 	level: { type: String, default: '초수' },
+	adoptPoint: { type: Number, default: 0 },
+	adoptCount: { type: Number, default: 0 },
 	questionCount: { type: Number, default: 0 },
 	answerCount: { type: Number, default: 0 },
-	adoptCount: { type: Number, default: 0 },
 	joinDate: { type: Date, default: Date.now },
 	lastUpdated: { type: Date, default: Date.now },
 }, {
@@ -33,23 +33,34 @@ memberSchema.statics.updateById = function (_id, data) {
 };
 
 memberSchema.statics.addQuestion = function (_id, questionCount) {
-	return this.findOneAndUpdate({ _id }, {$set: {questionCount: questionCount + 1}}, { new: true });
+	return this.findOneAndUpdate({ _id }, {$set: {
+		questionCount: questionCount + 1,
+	}}, { new: true });
 }
 
 memberSchema.statics.removeQuestion = function (_id, questionCount) {
-	return this.findOneAndUpdate({ _id }, {$set: {questionCount: questionCount - 1}}, { new: true });
+	return this.findOneAndUpdate({ _id }, {$set: {
+		questionCount: questionCount - 1,
+	}}, { new: true });
 }
 
 memberSchema.statics.addAnswer = function (_id, answerCount) {
-	return this.findOneAndUpdate({ _id }, {$set: {answerCount: answerCount + 1}}, { new: true });
+	return this.findOneAndUpdate({ _id }, {$set: {
+		answerCount: answerCount + 1,
+	}}, { new: true });
 }
 
 memberSchema.statics.removeAnswer = function (_id, answerCount) {
-	return this.findOneAndUpdate({ _id }, {$set: {answerCount: answerCount - 1}}, { new: true });
+	return this.findOneAndUpdate({ _id }, {$set: {
+		answerCount: answerCount - 1,
+	}}, { new: true });
 }
 
-memberSchema.statics.updateAdopt = function (_id, adoptCount) {
-	return this.findOneAndUpdate({ _id }, {$set: {adoptCount: adoptCount + 1}}, { new: true });
+memberSchema.statics.updateAdopt = function (member, point) {
+	return this.findOneAndUpdate({ _id: member._id }, {$set: {
+		adoptCount: member.adoptCount + 1, 
+		adoptPoint: member.adoptPoint + point,
+	}}, { new: true });
 }
 
 memberSchema.statics.deleteById = function (_id) {

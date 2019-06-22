@@ -3,15 +3,14 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const questionSchema = Schema({
-	memberId: { type: Schema.Types.ObjectId, ref: 'Member' },
+	member: { type: Schema.Types.ObjectId, require: true, ref: 'Member' },
 	title: { type: String, require: true },
 	content: { type: String, require: true },
-	image: { type: String, require: false },
-	categoryId: { type: String, require: true, ref: 'Category' },
+	category: { type: Schema.Types.ObjectId, require: true, ref: 'Category' },
 	tags: { type: [String], require: false },
 	point: { type: Number, default: 0 },
 	anonymous: { type: Number, default: 1 },
-	answerId: { type: Schema.Types.ObjectId, ref: 'Answer', default: null },
+	answer: { type: Schema.Types.ObjectId, default: null , ref: 'Answer' },
 	answerCount: { type: Number, default: 0 },
 	createdAt: { type: Date, default: Date.now },
 	updatedAt: { type: Date, default: Date.now },
@@ -41,15 +40,15 @@ questionSchema.statics.deleteById = function (_id) {
 };
 
 questionSchema.statics.findOneById = function (_id) {
-	return this.findOne({ _id });
+	return this.findOne({ _id }).populate('member').populate('category').exec();
 };
 
-questionSchema.statics.findByCategoryId = function (categoryId) {
-	return this.find({ categoryId });
+questionSchema.statics.findByCategory = function (category) {
+	return this.find({ category }).populate('member').populate('category').exec();
 }
 
 questionSchema.statics.findAll = function () {
-  return this.find({});
+  return this.find({}).sort({ createdAt: -1 }).populate('member').populate('category').exec();
 };
 
 module.exports = mongoose.model('Question', questionSchema);

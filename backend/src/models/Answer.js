@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const answerSchema = Schema({
-	questionId: { type: Schema.Types.ObjectId, ref: 'question' },
-	memberId: { type: Schema.Types.ObjectId, ref: 'member' },
+	question: { type: Schema.Types.ObjectId, require: true, ref: 'Question' },
+	member: { type: Schema.Types.ObjectId, require: true, ref: 'Member' },
 	content: { type: String, require: true },
 	tags: { type: [String], require: false },
 	anonymous: { type: Number, default: 0 },
@@ -16,8 +16,8 @@ const answerSchema = Schema({
 });
 
 answerSchema.statics.create = function (data) {
-  const member = new this(data);
-  return member.save();
+  const answer = new this(data);
+  return answer.save();
 };
 
 answerSchema.statics.updateById = function (_id, data) {
@@ -29,15 +29,15 @@ answerSchema.statics.deleteById = function (_id) {
 };
 
 answerSchema.statics.findOneById = function (_id) {
-  return this.findOne({ _id });
+  return this.findOne({ _id }).populate('question').populate('member').exec();
 };
 
-answerSchema.statics.findByQuestionId = function (questionId) {
-	return this.find({ questionId });
+answerSchema.statics.findByQuestionId = function (question) {
+	return this.find({ question }).populate('member').exec();
 };
 
 answerSchema.statics.findAll = function () {
-  return this.find({}).sort({ isAdopted: 1 	});
+  return this.find({}).sort({ isAdopted: -1	});
 };
 
 module.exports = mongoose.model('Answer', answerSchema);
