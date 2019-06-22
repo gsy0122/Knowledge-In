@@ -1,0 +1,11 @@
+.question-list {
+  text-align: center;
+}
+
+.category-list {
+  margin: 30px;
+  > div {
+    display: inline;
+    margin: 20px;
+  }
+}

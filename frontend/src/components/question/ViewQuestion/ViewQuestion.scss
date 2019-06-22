@@ -1,0 +1,47 @@
+.view-question {
+  text-align: center;
+}
+
+.question-title {
+  margin: 30px;
+  font-size: larger;
+  > div {
+    display: inline;
+  }
+}
+
+.question-icon {
+  color: #00c73c;
+  font-size: 44px;
+  line-height: 44px;
+  vertical-align: top;
+}
+
+.question-point {
+  margin: 4px;
+  padding: .1em .4em;
+  font-size: medium;
+  line-height: 0;
+  display: inline-block;
+  border-radius: 5px;
+  background-color: #a5adb7;
+  color: #fff;
+}
+
+.question.info {
+  right: 0;
+}
+
+.question-setting {
+  > button {
+    border: none;
+    border-radius: 5px;
+    margin: 30px 10px;
+    color: #fff;
+    font-size: 15px;
+    background-color: #00cc00; 
+    width: 70px;
+    height: 30px;
+    cursor: pointer;
+  }
+}

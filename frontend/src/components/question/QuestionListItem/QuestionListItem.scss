@@ -1,16 +1,18 @@
 .question-list-item {
-	display: table;
-	border-bottom: 1px solid silver;
-	cursor: pointer;
-	&:hover {
-			background-color: silver;
-	}
-	> div {
-			display: table-cell;
-			width: 100px;
-			text-align: center;
-			&:first-child {
-					width: 95%;
-			}
-	}
+  display: table;
+  height: 5vh;
+  line-height: 5vh;
+  cursor: pointer;
+  &:hover {
+    background-color: #eee;
+  }
+  > div {
+    display: table-cell;
+    border-top: 1px solid #000000;
+    width: 100px;
+    text-align: center;
+    &:first-child {
+        width: 95vw;
+    }
+  }
 }
