@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import classNames from 'classnames/bind';
+import {withRouter} from 'react-router-dom';
+
+import styles from './Register.scss';
+
+const cx = classNames.bind(styles);
 
 class Register extends Component {
   state = {
@@ -9,7 +15,7 @@ class Register extends Component {
     email: '',
     mobile: '',
     profile_image: '',
-    state_message: '',
+    status_message: '',
   };
   render() {
     const handleChange = e => {
@@ -17,35 +23,31 @@ class Register extends Component {
         [e.target.name]: e.target.value
       });
     }
-    const handleImageChange = e => {
-      this.setState({
-        profile_image: e.target.files[0],
-      });
-    };
     const handleSubmit = async () => {
       await axios
         .post('http://localhost:8000/member', this.state)
         .then(response => {
-          alert('회원가입 성공');
+          alert('가입이 완료되었습니다. 로그인 후 이용해 주세요.');
           console.log(JSON.stringify(response));
+          this.props.history.push('/auth/login');
         })
         .catch(error => {
           console.log(error);
         });
     };
     return(
-      <div>
-        이름 <input name='name' onChange={handleChange} /><br />
-        아이디 <input name='id' onChange={handleChange} /><br />
-        비밀번호 <input name='pw' type='password' onChange={handleChange} /><br />
-        이메일 <input name='email' onChange={handleChange} /><br />
-        전화번호 <input name='mobile' onChange={handleChange} /><br />
-        프로필 사진 <input name='profile_image' type='file' onChange={handleImageChange} /><br />
-        상태 메시지 <input name='state_message' onChange={handleChange} /><br />
-        <button onClick={handleSubmit}>회원가입</button>
+      <div className={cx('register')}>
+        <div>지식iN</div>
+        이름 <div><input name='name' onChange={handleChange} /></div>
+        아이디 <div><input name='id' onChange={handleChange} /></div>
+        비밀번호 <div><input name='pw' type='password' onChange={handleChange} /></div>
+        이메일 <div><input name='email' onChange={handleChange} /></div>
+        전화번호 <div><input name='mobile' onChange={handleChange} /></div>
+        상태 메시지 <div><input name='status_message' onChange={handleChange} /></div>
+        <button onClick={handleSubmit}>가입하기</button>
       </div>
-    ); // onClick 시 서버에서 member post
+    );
   }
 };
 
-export default Register;
+export default withRouter(Register);

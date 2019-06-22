@@ -1,4 +1,37 @@
 .login {
-  align-items: center;
-  justify-content: center;
+  position: absolute;
+  border: 3px soild #000;
+  top: 50vh;
+  left: 50vw;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 30vh 10vw;
+  > div {
+      margin: 10px 0;
+      color: #000;
+    > input {
+      border: 1px solid #555;
+      text-align: center;
+      width: 300px;
+      height: 50px;
+      font-size: large;
+      border-radius: 5px;
+      outline-style: none;
+    }
+  }
+  > button {
+    border: none;
+    margin: 10px 0;
+    color: #fff;
+    font-size: 15px;
+    background-color: #00cc00; 
+    width: 300px;
+    height: 50px;
+    cursor: pointer;
+  }
+  > p {
+    text-align: center;
+    cursor: pointer;
+    font-size: small;
+  }
 }
